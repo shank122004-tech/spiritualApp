@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Divine Mantra - Spiritual Companion</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <!-- Razorpay script removed -->
+</head>
+<body class="mahadev-theme">
+    <!-- Premium Splash Screen -->
+    <div id="splash" class="screen active">
+        <div class="premium-splash-container">
+            <div class="divine-glow"></div>
+            <div class="sacred-symbols">
+                <div class="om-symbol">ॐ</div>
+                <div class="swastika">卐</div>
+            </div>
+            <div class="golden-lotus">
+                <div class="lotus-layer"></div>
+                <div class="lotus-layer"></div>
+                <div class="lotus-layer"></div>
+            </div>
+            <div class="app-title">
+                <h1>Divine Mantra</h1>
+                <p>Build Your Own Mandir</p>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Screens -->
+    <div id="login" class="screen">
+        <div class="auth-container">
+            <div class="mandala-bg"></div>
+            <div class="glass-card">
+                <h2>Welcome Back</h2>
+                <input type="email" id="loginEmail" placeholder="Email" class="auth-input">
+                <input type="password" id="loginPassword" placeholder="Password" class="auth-input">
+                <button onclick="login()" class="auth-btn">Login</button>
+                <div class="auth-links">
+                    <a href="#" onclick="showScreen('signup')">Create Account</a>
+                    <a href="#" onclick="showScreen('forgot')">Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup" class="screen">
+        <div class="auth-container">
+            <div class="mandala-bg"></div>
+            <div class="glass-card">
+                <h2>Create Account</h2>
+                <input type="email" id="signupEmail" placeholder="Email" class="auth-input">
+                <input type="password" id="signupPassword" placeholder="Password" class="auth-input">
+                <input type="password" id="signupConfirm" placeholder="Confirm Password" class="auth-input">
+                <button onclick="signup()" class="auth-btn">Sign Up</button>
+                <div class="auth-links">
+                    <a href="#" onclick="showScreen('login')">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="forgot" class="screen">
+        <div class="auth-container">
+            <div class="mandala-bg"></div>
+            <div class="glass-card">
+                <h2>Reset Password</h2>
+                <input type="email" id="forgotEmail" placeholder="Email" class="auth-input">
+                <button onclick="resetPassword()" class="auth-btn">Send Reset Link</button>
+                <div class="auth-links">
+                    <a href="#" onclick="showScreen('login')">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screens -->
+    <div id="home" class="screen">
+        <!-- Enhanced Thin Header -->
+        <div class="enhanced-header">
+            <div class="user-section">
+                <img id="profile-pic" src="" alt="Profile" class="profile-pic" onclick="showScreen('profile')">
+                <span id="profile-name" class="profile-name">User</span>
+                <button class="icon-btn" onclick="showScreen('settings')">⚙️</button>
+            </div>
+            <div class="karmaBox">
+    <h3>🪬 Karma: <span id="karmaValue">0</span></h3>
+    <p id="karmaLevelText">Level 1 – Devotee</p>
+</div>
+
+            <div class="mantra-display">
+                <span id="current-mantra-display">Om Namah Shivaya</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="openGLBManagement('home')" title="Manage 3D Models">📁</button>
+            </div>
+        </div>
+
+        <!-- Enhanced 3D Background -->
+        <div class="home-3d-bg-container">
+            <model-viewer 
+                id="home-bg-model"
+                src=""
+                alt="Home Background God"
+                auto-rotate
+                camera-controls
+                camera-orbit="0deg 75deg 105%"
+                field-of-view="30deg"
+                interaction-prompt="none"
+                ar-modes="webxr scene-viewer quick-look">
+            </model-viewer>
+            <div class="god-glow"></div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Jap</h3>
+                <p id="total-jap-count" class="smooth-counter">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Mala</h3>
+                <p id="total-mala-count" class="smooth-counter">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Karma</h3>
+                <div class="karma-meter">
+                    <div class="karma-needle" id="karma-needle"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="main-btn" onclick="showScreen('jap')">
+                <span>🕉️</span>
+                Start Jap
+            </button>
+            <button class="main-btn" onclick="toggleChakraMode()">
+                <span>🌀</span>
+                Chakra Mode
+            </button>
+            <button class="main-btn" onclick="toggleMandalaMode()">
+                <span>❖</span>
+                Mandala Mode
+            </button>
+            <button class="main-btn" onclick="openFullscreenMandir()">
+                <span>🛕</span>
+                Mandir Darshan
+            </button>
+            <button class="main-btn" onclick="showScreen('custom-mantra')">
+                <span>📿</span>
+                Custom Mantra
+            </button>
+            <button class="main-btn" onclick="showScreen('god-selection')">
+                <span>👁️</span>
+                Select God Name
+            </button>
+        </div>
+
+        <!-- Floating Blessings -->
+        <div class="floating-blessings" id="floating-blessings"></div>
+    </div>
+
+    <!-- God Selection Screen -->
+    <div id="god-selection" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('home')">←</button>
+            <h2>Select God Name</h2>
+        </div>
+        <div class="settings-container">
+            <div class="theme-selector">
+                <h3>Choose God for Jap Animation</h3>
+                <div class="god-selection-options">
+                    <div class="god-option" onclick="selectGodName('Shiva')">
+                        <div class="god-icon">🕉️</div>
+                        <span>Shiva</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Krishna')">
+                        <div class="god-icon">🐚</div>
+                        <span>Krishna</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Ram')">
+                        <div class="god-icon">🏹</div>
+                        <span>Ram</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Hanuman')">
+                        <div class="god-icon"></div>
+                        <span>Hanuman</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Ganesha')">
+                        <div class="god-icon"></div>
+                        <span>Ganesha</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Durga')">
+                        <div class="god-icon">🦁</div>
+                        <span>Durga</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Saraswati')">
+                        <div class="god-icon">🪕</div>
+                        <span>Saraswati</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Lakshmi')">
+                        <div class="god-icon">💰</div>
+                        <span>Lakshmi</span>
+                    </div>
+                    <div class="god-option" onclick="selectGodName('Vishnu')">
+                        <div class="god-icon">🌀</div>
+                        <span>Vishnu</span>
+                    </div>
+                    <div class="god-option custom-god" onclick="showCustomGodInput()">
+                        <div class="god-icon">✏️</div>
+                        <span>Custom Name</span>
+                    </div>
+                </div>
+                
+                <!-- Custom God Name Input -->
+                <div id="custom-god-input" class="custom-god-input" style="display: none;">
+                    <input type="text" id="custom-god-name" placeholder="Enter your God name" class="auth-input">
+                    <button onclick="saveCustomGodName()" class="auth-btn">Save Custom Name</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div id="profile" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('home')">←</button>
+            <h2>Profile</h2>
+        </div>
+
+        <div class="profile-container">
+            <div class="profile-card">
+                <div class="profile-picture-section">
+                    <div class="profile-pic-large-container">
+                        <img id="profile-pic-large" src="" alt="Profile" class="profile-pic-large">
+                        <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+                        <button class="change-pic-btn" onclick="document.getElementById('profile-pic-input').click()">📷</button>
+                    </div>
+                    <input type="text" id="profile-name-input" placeholder="Enter your name" class="profile-name-input">
+                    <button onclick="saveProfile()" class="save-profile-btn">Save Profile</button>
+                </div>
+                
+                <div class="profile-info">
+                    <h3 id="user-email">User Email</h3>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <span>Total Jap Count:</span>
+                            <span id="profile-jap-count" class="smooth-counter">0</span>
+                        </div>
+                        <div class="stat">
+                            <span>Total Mala Count:</span>
+                            <span id="profile-mala-count" class="smooth-counter">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="action-btn" onclick="openFullscreenMandir()">Mandir Darshan</button>
+                <button class="action-btn" onclick="showScreen('custom-mantra')">Custom Mantra</button>
+                <button class="action-btn" onclick="showScreen('settings')">Settings</button>
+                <button class="action-btn" onclick="inviteFriends()">Invite Friends</button>
+                <button class="action-btn logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Jap Screen -->
+    <div id="jap" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('home')">←</button>
+            <h2>Naam Jap</h2>
+            <button class="icon-btn" onclick="openGLBManagement('jap')" title="Manage 3D Models">📁</button>
+        </div>
+
+        <!-- Clear Background Effects -->
+        <div class="jap-clear-effects">
+            <div class="jap-fog"></div>
+            <div class="floating-particles"></div>
+            <div class="soft-glow-jap"></div>
+            <div class="divine-light-jap"></div>
+            <div class="heaven-gradient"></div>
+        </div>
+
+        <div class="enhanced-jap-container">
+            <!-- Enhanced Jap Background -->
+            <div class="jap-background-container">
+                <model-viewer 
+                    id="jap-bg-static"
+                    src=""
+                    alt="Jap Background Static"
+                    camera-controls="none"
+                    auto-rotate="false"
+                    interaction-prompt="none"
+                    class="static-background">
+                </model-viewer>
+                
+                <div class="jap-god-foreground">
+                    <model-viewer 
+                        id="jap-god-model"
+                        src=""
+                        alt="Jap God"
+                        camera-controls
+                        auto-rotate
+                        camera-orbit="0deg 75deg 105%"
+                        field-of-view="30deg"
+                        interaction-prompt="when-focused">
+                    </model-viewer>
+                    <div class="god-glow"></div>
+                </div>
+            </div>
+
+            <!-- God Name Animation Container -->
+            <div class="god-name-animation" id="god-name-animation"></div>
+
+            <div class="mala-container">
+                <model-viewer 
+                    id="mala-model"
+                    src=""
+                    alt="Mala"
+                    camera-controls
+                    camera-orbit="0deg 75deg 105%"
+                    field-of-view="45deg">
+                </model-viewer>
+                <div class="jap-touch-area" id="jap-touch-area"></div>
+                <canvas id="touch-trail" class="touch-trail"></canvas>
+            </div>
+
+            <div class="jap-controls">
+                <div class="counter-display">
+                    <div class="bead-counter">
+                        <span>Bead: </span>
+                        <span id="current-bead" class="smooth-counter">1</span>
+                        <span>/108</span>
+                    </div>
+                    <div class="jap-counter">
+                        <span>Session Jap: </span>
+                        <span id="session-jap-count" class="smooth-counter">0</span>
+                    </div>
+                </div>
+
+                <div class="jap-metrics">
+                    <div class="speed-meter">
+                        <span>Speed:</span>
+                        <div class="speed-indicator" id="speed-indicator">
+                            <div class="speed-bar"></div>
+                        </div>
+                        <span id="speed-text">Perfect</span>
+                    </div>
+                    <div class="accuracy-meter">
+                        <span>Accuracy:</span>
+                        <span id="accuracy-value" class="smooth-counter">100%</span>
+                    </div>
+                </div>
+
+                <div class="jap-actions">
+                    <button class="action-btn small" onclick="toggleHandFreeMode()" id="handfree-btn">
+                        🤚 Hand-Free
+                    </button>
+                    <button class="action-btn small" onclick="resetSession()">
+                        🔄 Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Blessings -->
+        <div class="floating-blessings-jap" id="floating-blessings-jap"></div>
+
+        <!-- Achievement Animations -->
+        <div class="achievement-animations" id="achievement-animations"></div>
+
+        <!-- Lotus Petals -->
+        <div class="lotus-petals" id="lotus-petals"></div>
+    </div>
+
+    <!-- Custom Mantra Screen -->
+    <div id="custom-mantra" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('home')">←</button>
+            <h2>Custom Mantra</h2>
+        </div>
+
+        <div class="mantra-container">
+            <div class="glass-card">
+                <h3>Set Your Custom Mantra</h3>
+                <textarea id="custom-mantra-input" placeholder="Enter your custom mantra here..." class="mantra-input"></textarea>
+                <p class="mantra-hint">Set your personal mantra for meditation</p>
+                <button onclick="saveCustomMantra()" class="auth-btn">Save Mantra</button>
+                <div class="current-mantra">
+                    <h4>Current Mantra:</h4>
+                    <p id="current-mantra-text">Om Namah Shivaya</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Fullscreen Mandir -->
+    <div id="fullscreen-mandir" class="screen fullscreen-mandir">
+        <div class="mandir-header">
+            <div class="mandir-controls">
+                <!-- Divine Exit Button -->
+                <button class="divine-exit-btn" onclick="closeFullscreenMandir()" title="Exit Mandir">
+                    <div class="exit-icon">🕉️</div>
+                </button>
+                
+                <!-- Main Control Icon -->
+                <button class="icon-btn premium-btn sunkh-icon" onclick="toggleSunkhMenu()" title="Mandir Controls">
+                    🐚
+                </button>
+                
+                <!-- Hidden Controls Menu -->
+                <div id="sunkh-menu" class="sunkh-menu hidden">
+                    <button class="icon-btn premium-btn" onclick="openUploadGodPanel()" title="Upload God">🛕</button>
+                    <button class="icon-btn premium-btn" onclick="openOfferingPanel()" title="Offerings">🎁</button>
+                    <button class="icon-btn premium-btn" onclick="openDecorationPanel()" title="Decorations">✨</button>
+                   
+                    <button class="icon-btn premium-btn" onclick="openMandirBackgroundPanel()" title="Background">🏞️</button>
+                    <button class="icon-btn premium-btn" onclick="clearAllDecorations()" title="Clear All">🗑️</button>                    
+                </div>
+            </div>
+        </div>
+
+        <div class="mandir-container">
+            <!-- Full Screen Mandir Background -->
+            <div class="mandir-background-container">
+                <div id="dynamicAura" class="god-aura"></div>
+
+                <model-viewer 
+                    id="mandir-bg-static"
+                    src=""
+                    alt="Mandir Background Static"
+                    camera-controls="false"
+                    auto-rotate="false"
+                    interaction-prompt="none"
+                    class="static-background-fullscreen">
+                </model-viewer>
+            </div>
+
+            <!-- Lighting System -->
+            <div class="ambient-light"></div>
+            <div class="spot-light"></div>
+            <div class="left-light"></div>
+            <div class="right-light"></div>
+
+            <!-- Main God Display -->
+            <div class="mandir-god-container">
+                <model-viewer 
+                    id="mandir-main-god"
+                    src=""
+                    alt="Mandir God"
+                    camera-controls
+                    auto-rotate
+                    camera-orbit="0deg 75deg 105%"
+                    field-ofview="30deg">
+                </model-viewer>
+                <div class="god-glow"></div>
+            </div>
+
+            <!-- Interactive Decorations Container -->
+            <div id="interactive-decorations" class="interactive-decorations"></div>
+
+            <!-- Delete Zone -->
+            <div id="delete-zone" class="delete-zone">
+                <div class="delete-text">🗑️ Drag here to delete</div>
+            </div>
+
+            <!-- Background Edit Controls -->
+            <div id="background-edit-controls" class="background-edit-controls hidden">
+                <div class="edit-controls-header">
+                    <h4>Background Edit Mode</h4>
+                    <button class="icon-btn small" onclick="exitBackgroundEditMode()">✕</button>
+                </div>
+                <div class="edit-controls-body">
+                    <button class="icon-btn" onclick="resetBackgroundSize()" title="Reset Size">↺</button>
+                    <button class="icon-btn" onclick="centerBackground()" title="Center">◎</button>
+                </div>
+            </div>
+
+            <!-- Panels -->
+            <div id="upload-god-panel" class="mandir-panel">
+                <div class="panel-header">
+                    <h3>Upload Your God</h3>
+                    <button class="close-panel-btn" onclick="closeUploadGodPanel()">✕</button>
+                </div>
+                <div class="panel-content">
+                    <p>Upload your own 3D God model (GLB/GLTF format)</p>
+                    <input type="file" id="god-upload-input" accept=".glb,.gltf" style="display: none;">
+                    <button class="auth-btn premium-btn" onclick="document.getElementById('god-upload-input').click()">Choose File</button>
+                    <button class="auth-btn secondary" onclick="resetMandirGod()">Reset to Default</button>
+                </div>
+            </div>
+
+            <div id="offering-panel" class="mandir-panel">
+                <div class="panel-header">
+                    <h3>Make Offerings</h3>
+                    <button class="close-panel-btn" onclick="closeOfferingPanel()">✕</button>
+                </div>
+                <div class="panel-content">
+                    <div class="offerings-grid" id="offerings-grid">
+                        <!-- Premium offering items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="decoration-panel" class="mandir-panel">
+                <div class="panel-header">
+                    <h3>Decorations</h3>
+                    <button class="close-panel-btn" onclick="closeDecorationPanel()">✕</button>
+                </div>
+                <div class="panel-content">
+                    <div class="decorations-grid" id="decorations-grid">
+                        <!-- Premium decoration items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="custom-decoration-panel" class="mandir-panel">
+                <div class="panel-header">
+                    <h3>Add Custom Decoration</h3>
+                    <button class="close-panel-btn" onclick="closeCustomDecorationPanel()">✕</button>
+                </div>
+                <div class="panel-content">
+                    <p>Upload your own 3D decoration model (GLB/GLTF format)</p>
+                    <input type="file" id="custom-decoration-upload" accept=".glb,.gltf" style="display: none;">
+                    <button class="auth-btn premium-btn" onclick="document.getElementById('custom-decoration-upload').click()">Upload Custom Decoration</button>
+                </div>
+            </div>
+
+            <div id="mandir-background-panel" class="mandir-panel">
+                <div class="panel-header">
+                    <h3>Mandir Background</h3>
+                    <button class="close-panel-btn" onclick="closeMandirBackgroundPanel()">✕</button>
+                </div>
+                <div class="panel-content">
+                    <p>Upload static background for your mandir (GLB/GLTF format)</p>
+                    <input type="file" id="mandir-bg-upload" accept=".glb,.gltf" style="display: none;">
+                    <button class="auth-btn premium-btn" onclick="document.getElementById('mandir-bg-upload').click()">Choose Background</button>
+                    <button class="auth-btn secondary" onclick="resetMandirBackground()">Reset to Default</button>
+                    <div class="background-controls-info">
+                        <p class="mantra-hint">Tip: Use pinch gestures to resize background. Remove god image first to edit background.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animation Container -->
+            <div id="mandir-animations" class="mandir-animations"></div>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('home')">←</button>
+            
+            <h2>Settings</h2>
+        </div>
+
+        <div class="settings-container">
+            <div class="setting-item" onclick="showThemeStore()">
+                <span>🎨 Theme Store</span>
+            </div>
+            <div class="setting-item" onclick="openFullscreenMandir()">
+                <span>🛕 Mandir Darshan</span>
+            </div>
+            <div class="setting-item" onclick="showScreen('custom-mantra')">
+                <span>🕉️ Custom Mantra</span>
+            </div>
+            <div class="setting-item" onclick="showScreen('god-selection')">
+                <span>👁️ God Name Selection For Naam Jap</span>
+            </div>
+            
+            <div class="setting-item" onclick="clearData()">
+                <span>🗑️ Clear All Data</span>
+            </div>
+            <div class="setting-item" onclick="showScreen('about')">
+                <span>ℹ️ About</span>
+            </div>
+            <div class="setting-item" onclick="showScreen('privacy')">
+                <span>🔒 Privacy Policy</span>
+            </div>
+            <div class="setting-item" onclick="showScreen('terms')">
+                <span>📄 Terms of Service</span>
+            </div>
+            <button onclick="restorePurchases()" class="restore-btn">🔁 Restore Purchases</button>
+
+        </div>
+    </div>
+
+    <!-- Theme Store Screen -->
+    <div id="theme-store" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('settings')">←</button>
+            <h2>Theme Store</h2>
+        </div>
+
+        <div class="theme-store-container">
+            <div class="theme-grid-full">
+                <div class="theme-option" data-theme="mahadev" onclick="changeTheme('mahadev')">
+                    <div class="theme-preview mahadev-theme"></div>
+                    <span>Mahadev</span>
+                    <div class="theme-status free">FREE</div>
+                </div>
+                <div class="theme-option premium" data-theme="krishna" onclick="payUsingUPI('krishna', 99)">
+                    <div class="theme-preview krishna-theme"></div>
+                    <span>Krishna</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="golden" onclick="payUsingUPI('golden', 99)">
+                    <div class="theme-preview golden-theme"></div>
+                    <span>Golden</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="vishnu" onclick="payUsingUPI('vishnu', 99)">
+                    <div class="theme-preview vishnu-theme"></div>
+                    <span>Vishnu</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="durga" onclick="payUsingUPI('durga', 99)">
+                    <div class="theme-preview durga-theme"></div>
+                    <span>Durga</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="ganesha" onclick="payUsingUPI('ganesha', 99)">
+                    <div class="theme-preview ganesha-theme"></div>
+                    <span>Ganesha</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="hanuman" onclick="payUsingUPI('hanuman', 99)">
+                    <div class="theme-preview hanuman-theme"></div>
+                    <span>Hanuman</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="saraswati" onclick="payUsingUPI('saraswati', 99)">
+                    <div class="theme-preview saraswati-theme"></div>
+                    <span>Saraswati</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="lakshmi" onclick="payUsingUPI('lakshmi', 99)">
+                    <div class="theme-preview lakshmi-theme"></div>
+                    <span>Lakshmi</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="radha" onclick="payUsingUPI('radha', 99)">
+                    <div class="theme-preview radha-theme"></div>
+                    <span>Radha</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="kubera" onclick="payUsingUPI('kubera', 99)">
+                    <div class="theme-preview kubera-theme"></div>
+                    <span>Kubera</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="brahma" onclick="payUsingUPI('brahma', 99)">
+                    <div class="theme-preview brahma-theme"></div>
+                    <span>Brahma</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="kartikeya" onclick="payUsingUPI('kartikeya', 99)">
+                    <div class="theme-preview kartikeya-theme"></div>
+                    <span>Kartikeya</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="surya" onclick="payUsingUPI('surya', 99)">
+                    <div class="theme-preview surya-theme"></div>
+                    <span>Surya</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="indra" onclick="payUsingUPI('indra', 99)">
+                    <div class="theme-preview indra-theme"></div>
+                    <span>Indra</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="yama" onclick="payUsingUPI('yama', 99)">
+                    <div class="theme-preview yama-theme"></div>
+                    <span>Yama</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="varuna" onclick="payUsingUPI('varuna', 99)">
+                    <div class="theme-preview varuna-theme"></div>
+                    <span>Varuna</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="vayu" onclick="payUsingUPI('vayu', 99)">
+                    <div class="theme-preview vayu-theme"></div>
+                    <span>Vayu</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+                <div class="theme-option premium" data-theme="agni" onclick="payUsingUPI('agni', 99)">
+                    <div class="theme-preview agni-theme"></div>
+                    <span>Agni</span>
+                    <div class="premium-badge">₹99</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GLB Management Panel -->
+    <div id="glb-management-panel" class="glb-management-panel">
+        <div class="panel-header">
+            <h3 id="glb-panel-title">Manage 3D Models</h3>
+            <button class="close-panel-btn" onclick="closeGLBManagement()">✕</button>
+        </div>
+        <div class="panel-content">
+            <div class="glb-upload-section">
+                <input type="file" id="glb-upload-input" accept=".glb,.gltf" style="display: none;">
+                <button class="auth-btn premium-btn" onclick="document.getElementById('glb-upload-input').click()">Upload New 3D Model</button>
+                <p class="mantra-hint">Upload GLB/GLTF files for permanent storage</p>
+            </div>
+           
+        </div>
+    </div>
+
+    <!-- UPI Payment Success Modal -->
+    <div id="upi-success-modal" class="payment-modal" style="display: none;">
+        <div class="payment-content">
+            <div class="success-animation">✨</div>
+            <h2>🎉 Theme Unlocked Successfully!</h2>
+            <p>Your premium theme has been activated and is now available.</p>
+            <button onclick="closeUPISuccessModal()" class="auth-btn">Continue</button>
+        </div>
+    </div>
+
+   <!-- Enhanced About Screen -->
+<div id="about" class="screen">
+    <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('settings')">←</button>
+        <h2>About Divine Mantra</h2>
+    </div>
+    <div class="info-content">
+        <div class="glass-card">
+            <div class="app-logo-large">
+                <div class="om-symbol-large">ॐ</div>
+            </div>
+            <h3>Divine Mantra - Spiritual Companion</h3>
+            <p class="app-tagline">Your personal sanctuary for spiritual growth and meditation</p>
+            
+            <div class="feature-highlights">
+                <div class="feature-item">
+                    <span class="feature-icon">🕉️</span>
+                    <div>
+                        <h4>Naam Jap Counter</h4>
+                        <p>Advanced mala counter with 108 beads, speed tracking, and accuracy metrics</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🛕</span>
+                    <div>
+                        <h4>3D Mandir Darshan</h4>
+                        <p>Immersive temple experience with customizable deities and galaxy background</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎨</span>
+                    <div>
+                        <h4>Premium Themes</h4>
+                        <p>19 divine themes representing different deities and spiritual energies</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📿</span>
+                    <div>
+                        <h4>Custom Mantras</h4>
+                        <p>Personalize your spiritual practice with your preferred mantras</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-details">
+                <div class="detail-section">
+                    <h4>App Version</h4>
+                    <p>Version 4.0.0 - Divine Experience Update</p>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Technologies Used</h4>
+                    <div class="tech-badges">
+                        <span class="tech-badge">Firebase</span>
+                        <span class="tech-badge">3D Model Viewer</span>
+                        <span class="tech-badge">UPI Payments</span>
+                        <span class="tech-badge">PWA</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Spiritual Features</h4>
+                    <ul class="spiritual-features">
+                        <li>Hand-free meditation mode</li>
+                        <li>Chakra alignment visualization</li>
+                        <li>Divine offering animations</li>
+                        <li>God name selection for jap</li>
+                        <li>Karma progress tracking</li>
+                        <li>Floating blessings & lotus petals</li>
+                    </ul>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Our Mission</h4>
+                    <p>To create a digital sanctuary that helps spiritual seekers maintain their daily sadhana (practice) with modern technology while preserving traditional spiritual values.</p>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Developer</h4>
+                    <p>Created with ❤️ by spiritual technology enthusiasts</p>
+                    <p class="contact-info">Email: support@divinemantra.app</p>
+                </div>
+            </div>
+            
+            <div class="spiritual-quote">
+                <p>"The mind is everything. What you think you become." - Buddha</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Privacy Policy Screen -->
+<div id="privacy" class="screen">
+    <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('settings')">←</button>
+        <h2>Privacy Policy</h2>
+    </div>
+    <div class="info-content">
+        <div class="glass-card">
+            <div class="policy-header">
+                <h3>Your Privacy & Spiritual Journey</h3>
+                <p class="last-updated">Last Updated: January 2024</p>
+            </div>
+            
+            <div class="privacy-sections">
+                <section class="privacy-section">
+                    <h4>🔒 Our Privacy Commitment</h4>
+                    <p>At Divine Mantra, we believe your spiritual journey is deeply personal. We are committed to protecting your privacy and ensuring your spiritual practice remains confidential.</p>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>📱 Data We Store Locally</h4>
+                    <p>All your spiritual data remains securely on your device:</p>
+                    <ul>
+                        <li><strong>Jap Count & Mala Progress:</strong> Your daily spiritual practice metrics</li>
+                        <li><strong>Profile Information:</strong> Name, profile picture, custom mantras</li>
+                        <li><strong>3D Models:</strong> Uploaded deity models and preferences</li>
+                        <li><strong>Theme Preferences:</strong> Your selected app themes and settings</li>
+                        <li><strong>Spiritual Goals:</strong> Your personal meditation targets</li>
+                    </ul>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>🌐 Internet Connectivity</h4>
+                    <p>Internet is only required for:</p>
+                    <ul>
+                        <li>User authentication through Firebase</li>
+                        <li>Premium theme purchases via UPI</li>
+                        <li>App updates and new feature downloads</li>
+                    </ul>
+                    <p>Your spiritual practice data never leaves your device.</p>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>💳 Payment Information</h4>
+                    <p>All premium theme purchases are processed securely through UPI payment apps. We never store your payment details. All payment processing happens through your chosen UPI app.</p>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>📊 Analytics & Improvement</h4>
+                    <p>We may collect anonymous usage data to improve the app experience:</p>
+                    <ul>
+                        <li>App performance metrics</li>
+                        <li>Feature usage patterns (anonymized)</li>
+                        <li>Crash reports for bug fixing</li>
+                    </ul>
+                    <p>This data cannot be linked to your personal identity or spiritual practice.</p>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>👁️ Third-Party Services</h4>
+                    <div class="third-party-services">
+                        <div class="service-item">
+                            <strong>Firebase</strong>
+                            <span>Authentication & Backend</span>
+                        </div>
+                        <div class="service-item">
+                            <strong>UPI Apps</strong>
+                            <span>Secure Payments (GPay, PhonePe, etc.)</span>
+                        </div>
+                        <div class="service-item">
+                            <strong>Google Model Viewer</strong>
+                            <span>3D Model Rendering</span>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>🗑️ Data Deletion</h4>
+                    <p>You can completely clear all your data at any time using the "Clear All Data" option in Settings. This will permanently remove:</p>
+                    <ul>
+                        <li>All jap counts and spiritual progress</li>
+                        <li>Uploaded 3D models and customizations</li>
+                        <li>Profile information and preferences</li>
+                        <li>App settings and theme selections</li>
+                    </ul>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>🛡️ Your Rights</h4>
+                    <p>You have the right to:</p>
+                    <ul>
+                        <li>Access all data stored on your device</li>
+                        <li>Export your spiritual progress (coming soon)</li>
+                        <li>Delete all data completely</li>
+                        <li>Understand how your data is used</li>
+                    </ul>
+                </section>
+                
+                <section class="privacy-section">
+                    <h4>📞 Contact & Support</h4>
+                    <p>If you have any privacy concerns or questions:</p>
+                    <p class="contact-info">Email: privacy@divinemantra.app</p>
+                    <p>We typically respond within 24-48 hours.</p>
+                </section>
+            </div>
+            
+            <div class="privacy-note">
+                <p><strong>Note:</strong> This privacy policy may be updated as we add new features. We'll notify you of significant changes within the app.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Terms of Service Screen -->
+<div id="terms" class="screen">
+    <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('settings')">←</button>
+        <h2>Terms of Service</h2>
+    </div>
+    <div class="info-content">
+        <div class="glass-card">
+            <div class="terms-header">
+                <h3>Terms & Conditions</h3>
+                <p class="last-updated">Effective: January 2024</p>
+            </div>
+            
+            <div class="terms-sections">
+                <section class="terms-section">
+                    <h4>📜 Acceptance of Terms</h4>
+                    <p>By using Divine Mantra, you agree to these Terms of Service and our Privacy Policy. These terms govern your use of our spiritual companion application.</p>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>🕉️ Spiritual Purpose</h4>
+                    <p>Divine Mantra is designed as a spiritual tool for:</p>
+                    <ul>
+                        <li>Personal meditation and naam jap practice</li>
+                        <li>Digital darshan and spiritual visualization</li>
+                        <li>Tracking spiritual progress and discipline</li>
+                        <li>Creating a personalized spiritual environment</li>
+                    </ul>
+                    <p><strong>Important:</strong> This app is a spiritual aid, not a replacement for medical treatment, psychological therapy, or traditional religious guidance.</p>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>👤 User Accounts</h4>
+                    <p>To access premium features, you must create an account:</p>
+                    <ul>
+                        <li>You must provide accurate registration information</li>
+                        <li>You are responsible for maintaining account security</li>
+                        <li>You must be at least 13 years old to use this app</li>
+                        <li>Accounts are for personal use only</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>💎 Premium Features</h4>
+                    <p>Premium themes are available through one-time purchases:</p>
+                    <ul>
+                        <li>Payments are processed securely via UPI apps</li>
+                        <li>All sales are final - no refunds for digital content</li>
+                        <li>Premium themes are permanently unlocked for your account</li>
+                        <li>Prices may change without notice for new purchases</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>📄 Content Guidelines</h4>
+                    <p>When uploading 3D models or custom content:</p>
+                    <ul>
+                        <li>You must own or have permission to use uploaded content</li>
+                        <li>Content must respect religious and spiritual sentiments</li>
+                        <li>No offensive, inappropriate, or copyrighted material</li>
+                        <li>We reserve the right to remove violating content</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>⚖️ Prohibited Activities</h4>
+                    <p>You agree not to:</p>
+                    <ul>
+                        <li>Misuse religious content or symbols</li>
+                        <li>Reverse engineer or modify the app code</li>
+                        <li>Use the app for commercial purposes without permission</li>
+                        <li>Harass other users or share inappropriate content</li>
+                        <li>Attempt to breach app security measures</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>📱 App Availability</h4>
+                    <p>We strive to maintain app availability but cannot guarantee:</p>
+                    <ul>
+                        <li>24/7 uninterrupted service</li>
+                        <li>Compatibility with all devices</li>
+                        <li>Permanent availability of all features</li>
+                        <li>Support for older app versions indefinitely</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>🔄 Modifications to Service</h4>
+                    <p>We may:</p>
+                    <ul>
+                        <li>Update, modify, or discontinue features</li>
+                        <li>Change pricing for new premium content</li>
+                        <li>Update these terms with notice to users</li>
+                        <li>Maintain the app with bug fixes and improvements</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>⚡ Limitation of Liability</h4>
+                    <p>Divine Mantra is provided "as is" without warranties. We are not liable for:</p>
+                    <ul>
+                        <li>Any spiritual or personal outcomes from app usage</li>
+                        <li>Data loss due to device failure or user error</li>
+                        <li>Incompatibility with specific devices or OS versions</li>
+                        <li>Third-party service interruptions</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>🌍 International Use</h4>
+                    <p>While available globally, users are responsible for:</p>
+                    <ul>
+                        <li>Complying with local laws regarding spiritual apps</li>
+                        <li>Understanding local payment and tax regulations</li>
+                        <li>Ensuring app usage aligns with local customs</li>
+                    </ul>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>📞 Support & Contact</h4>
+                    <p>For technical support or questions about these terms:</p>
+                    <p class="contact-info">Email: support@divinemantra.app</p>
+                    <p>We're here to help you on your spiritual journey.</p>
+                </section>
+                
+                <section class="terms-section">
+                    <h4>🕊️ Spiritual Disclaimer</h4>
+                    <p>Divine Mantra respects all spiritual paths and traditions. The app is designed to support personal spiritual practice regardless of specific religious affiliation. We encourage users to:</p>
+                    <ul>
+                        <li>Respect all spiritual traditions and beliefs</li>
+                        <li>Use the app as a supplement to, not replacement for, traditional practices</li>
+                        <li>Consult with spiritual guides for serious spiritual matters</li>
+                        <li>Maintain balance between digital and real-world spiritual practice</li>
+                    </ul>
+                </section>
+            </div>
+            
+            <div class="terms-acceptance">
+                <p>By continuing to use Divine Mantra, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+    <input type="file" id="god-upload-input" accept=".glb,.gltf" style="display: none;">
+    <input type="file" id="mandir-bg-upload" accept=".glb,.gltf" style="display: none;">
+    <input type="file" id="custom-decoration-upload" accept=".glb,.gltf" style="display: none;">
+    <input type="file" id="glb-upload-input" accept=".glb,.gltf" style="display: none;">
+
+    <script src="script.js"></script>
+</body>
+</html>
